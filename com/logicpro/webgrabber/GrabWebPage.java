@@ -5,41 +5,15 @@
  * and stores them in a single output directory with all urls in html page modified to point 
  * to this directory itself.
  * @date: 12-Dec-2013
- * @description: 
- * @lastUpdate: 
- * @reviewer:
- * @reviewDate:
- * @comments :
- * @modified by: Pramod
- * @modification No hyperlinks will be traced, added support for redirection http responses
- */
-package com.logicpro.webgrabber;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.StringTokenizer;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-
-/**
- * @author Pramod Khare
- * GrabWebPage using HttpURLConnection
- * GrabWebPage - main class which takes 2 inputs, one is url to be grabbed and 
- * output directory path i.e. where to store the grabbed files and folders
+ * 
+ * Important Note - Right now, all the files gets stored inside single destination directory (given directory) 
+ * with no directory structure as of website is maintained, 
+ * this is because we are not grabbing all pages or multiple pages of a website, we grab only one webpage.
+ * So all external links (same domain links) will be modified in downloaded HTML to refer (look into) current 
+ * directory for all the resources.
+ * 
+ * So when you open downloaded HTML in browser it will open with proper css and images applied,
+ * even though in original webpage all css and js files were from different folder hierarchy.
  */
 
 /**
@@ -94,9 +68,33 @@ import org.jsoup.select.Elements;
 		cgi
 		dll
  */
-//TODO - For other filetypes other than html, direct file storage, donot take string
-//Maintain directory structure
 
+package com.logicpro.webgrabber;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.StringTokenizer;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+/**
+ * @author Pramod Khare
+ * Main class where it all starts
+ */
 public class GrabWebPage {
 	/**
 	 * Default Constructor
@@ -114,16 +112,12 @@ public class GrabWebPage {
 	 */
 	public static void main(String[] args) throws Exception {
 		
-		/*if(!(args.length == 4 || args.length == 2)){
-			System.out.println("Usage: GrabWebPage [--url url-to-grab] [--out output-directory-full-path]");
-	        System.out.println("  --url url-to-grab\turl of webpage to grab");
-	        System.out.println("  --out output-directory-full-path\t[Optional] where to store grabbed files");
-	        System.out.println("  \tIn case no output directory is specified, it stores all the files to current " +
-	        		"directory");
+		if(!(args.length == 4)){
+			System.out.println(GrabUtility.usageMessage);
 	        throw new Exception("Invalid input parameters");
 		}
 		String url = null;
-		String outputFile = null;
+		String outputDirPath = null;
 		
 		int i = 0;
         while (i < args.length) {
@@ -132,13 +126,16 @@ public class GrabWebPage {
             	i++;
             }
             if (args[i].equals("--out")) {
-            	outputFile = args[++i];
+            	outputDirPath = args[++i];
             	i++;
             }
-        };*/
+        };
 		
-		//Pass the starting URL
-		String url = "http://www.myurl.com/mypage.html";
+        if(url == null || outputDirPath == null){
+        	System.out.println(GrabUtility.usageMessage);
+	        throw new Exception("Invalid input parameters");
+        }
+        
 		// in case no http protocol specified then add protocol part 
 		// to form proper url
 		if(!url.startsWith("http://") && !url.startsWith("https://")){
@@ -146,7 +143,6 @@ public class GrabWebPage {
 		}
 		
 		URL obj = new URL(url);
-		String outputDirPath = "F:"+File.separatorChar+"New folder";
 		File outputDir = new File(outputDirPath);
 		if(outputDir.exists() && outputDir.isFile()){
 			System.out.println("output directory path is wrong, please provide some directory path");
@@ -166,7 +162,7 @@ public class GrabWebPage {
 			System.out.println("Total filesToGrab - "+linksToGrabSize);
 		}
 		
-		for (int i=0; i<linksToGrabSize; i++) {
+		for (i=0; i<linksToGrabSize; i++) {
 			System.out.println("Value of i - "+i);
 			tempEntry = null;
 			
@@ -336,11 +332,22 @@ public class GrabWebPage {
 	}
 }
 
+/**
+ * @author Pramod Khare
+ * Contains all the utility methods used in above GrabWebPage class
+ */
 class GrabUtility{
 	// filesToGrab - maintains all the links to files which we are going to grab/download
 	public static List<String> filesToGrab = new ArrayList<String>();
 	// grabbedFiles - links/urls to files which we have already downloaded
 	public static HashSet<String> grabbedFiles = new HashSet<String>();
+	
+	public static final String usageMessage = 
+				"Usage: GrabWebPage [--url url-to-grab] [--out output-directory-full-path]"
+		    + 	"  		--url url-to-grab\turl of webpage to grab"
+		    + 	"  		--out output-directory-full-path where to store grabbed files"
+		    +  	"For example -->  " 
+		    +	" GrabWebPage --url \"http://www.google.com\" --out \"F:/New folder\"";
 	
 	public static void addLinkGrabbedFilesList(String url){
 		synchronized (grabbedFiles) {
