@@ -373,14 +373,6 @@ class GrabUtility{
 	
 	public static String searchForNewFilesToGrab(String htmlContent, URL fromHTMLPageUrl){
 		//get all links from this webpage and add them to Frontier List i.e. LinksToVisit ArrayList
-		/*Elements links = responseHTMLDoc.select("a[href]");
-		for(Element link: links){
-			if(link.attr("href").startsWith("/") || link.attr("href").startsWith("http://cs5700.ccs.neu.edu") 
-					|| !link.attr("href").startsWith("http://")){
-				addLinkToFrontier(link.attr("href"));
-			}
-		}*/
-		
 		Document responseHTMLDoc = null;
 		String urlToGrab = null;
 		if(!htmlContent.trim().equals("")){
