@@ -103,7 +103,7 @@ public class GrabWebPage {
 	
 	/**
 	 * @param args - The inline Command parameters. 
-	 * Expects only 2 parameters, first is url and second is output directory location
+	 * accepts only 2 parameters, first is url and second is output directory location
 	 * @throws Exception 
 	 * @exception In case url is broken or invalid - program will throw an exception
 	 *            In case of user doesn't have proper privileges over output directory
