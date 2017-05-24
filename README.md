@@ -5,7 +5,9 @@ Works just like webgrabber, downloads all the resources i.e. css, js, images fro
 and stores all the files in single folder.
 
 @author - Pramod Khare
+
 @Purpose - This program will grab the whole web page including all its images, css and js files and stores them in a single output directory with all urls in html page modified to point to this directory itself.
+
 @date: 12-Dec-2013
 
 Important Note - Right now, all the files gets stored inside single destination directory (given directory) with no directory structure as of website is maintained, this is because we are not grabbing all pages or multiple pages of a website, we grab only one webpage. So all external links (same domain links) will be modified in downloaded HTML to refer (look into) current directory for all the resources.
